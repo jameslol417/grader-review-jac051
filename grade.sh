@@ -21,8 +21,27 @@ then
 fi
 cp -r lib/ student-submission/lib
 cd student-submission/
-java -cp .:lib/hamcrest-core-1.3.jar:lib/junit-4.13.2.jar org.junit.runner.JUnitCore TestListExamples 2>java-errors.txt 
-if [[ $? -ne 0 ]]
+java -cp $CPATH org.junit.runner.JUnitCore TestListExamples > errors.txt
+
+exitCode=$?
+
+error=$(grep -m1 "testMergeRightEnd" errors.txt) 
+expected=$(grep -m1 "expected" errors.txt)
+
+if [[ $exitCode -ne 0 ]]
 then
-    cat java-errors.txt
+    echo "Exit code:" $exitCode 
+    echo ""
+    echo "Test failed:" $error
+    echo "Check if your merge method works as intended for the following 
+    2 arrays: {\"a\", \"b\", \"c\"}, {\"a\", \"b\"}."
+    echo $expected
+    echo ""
+    echo "Errors found, grade: Fail"
+    exit $exitCode
+else
+    echo "No errors found, grade: Pass"
 fi
+
+
+
